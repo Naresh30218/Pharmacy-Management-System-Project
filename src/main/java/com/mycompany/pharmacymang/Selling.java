@@ -13,8 +13,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
 import net.proteanit.sql.DbUtils;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 /**
  *
  * @author FX566LI
@@ -27,6 +29,7 @@ public class Selling extends javax.swing.JFrame {
     public Selling() {
         initComponents();
         SelectMed();
+        ShowDate();
         
      
         }
@@ -85,9 +88,9 @@ java.sql.Date MyMfgDate,MyExpDate;
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
+        Search = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        MedId = new javax.swing.JTextField();
+        SearchBar = new javax.swing.JTextField();
         Qty = new javax.swing.JTextField();
         AddMed = new javax.swing.JButton();
         Print = new javax.swing.JButton();
@@ -119,18 +122,23 @@ java.sql.Date MyMfgDate,MyExpDate;
         jLabel1.setForeground(new java.awt.Color(0, 51, 255));
         jLabel1.setText("MEDICINE LIST");
 
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(0, 51, 255));
-        jLabel5.setText("ID");
+        Search.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        Search.setForeground(new java.awt.Color(0, 51, 255));
+        Search.setText("SEARCH");
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(0, 51, 255));
         jLabel8.setText("QUANTITY");
 
-        MedId.setForeground(new java.awt.Color(0, 51, 255));
-        MedId.addActionListener(new java.awt.event.ActionListener() {
+        SearchBar.setForeground(new java.awt.Color(0, 51, 255));
+        SearchBar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                MedIdActionPerformed(evt);
+                SearchBarActionPerformed(evt);
+            }
+        });
+        SearchBar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                SearchBarKeyReleased(evt);
             }
         });
 
@@ -265,40 +273,38 @@ java.sql.Date MyMfgDate,MyExpDate;
                 .addGap(183, 183, 183))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(16, 16, 16)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addGap(117, 117, 117)
-                                        .addComponent(AddMed)
-                                        .addGap(38, 38, 38))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                                .addGap(32, 32, 32)
-                                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(0, 0, Short.MAX_VALUE))
-                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                                                .addGap(26, 26, 26)
-                                                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(MedText))
-                                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                                .addGap(0, 0, Short.MAX_VALUE)
-                                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                    .addComponent(MedId, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                        .addComponent(Qty, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                                        .addGap(18, 18, 18)))
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 542, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(117, 117, 117)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 672, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                    .addGap(133, 133, 133)
+                                    .addComponent(AddMed)
+                                    .addGap(38, 38, 38))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                            .addGap(42, 42, 42)
+                                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(18, 18, 18)
+                                            .addComponent(MedText))
+                                        .addGroup(jPanel2Layout.createSequentialGroup()
+                                            .addGap(0, 0, Short.MAX_VALUE)
+                                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                .addComponent(SearchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                    .addComponent(Qty, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                                            .addGap(48, 48, 48)
+                                            .addComponent(Search)
+                                            .addGap(0, 0, Short.MAX_VALUE)))
+                                    .addGap(18, 18, 18)))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 542, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addGap(133, 133, 133)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 672, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(0, 0, Short.MAX_VALUE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(394, 394, 394)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -331,8 +337,8 @@ java.sql.Date MyMfgDate,MyExpDate;
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(MedId, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5))
+                            .addComponent(SearchBar, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Search))
                         .addGap(29, 29, 29)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(MedText, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -564,20 +570,37 @@ int i=0,price,Medid;
     }//GEN-LAST:event_jLabel2MouseClicked
 
     private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
-        new Agents().setVisible(true);
-        this.dispose();
+        /*String Query = "select * from VNRN.AGENTTB where ANAME= 'Ram' and APASS ='123'"; 
+        try{
+           con =   DriverManager.getConnection("jdbc:derby://localhost:1527/phms","Vnrn","Vnrn");
+           st = con.createStatement();
+           
+           rs = st.executeQuery(Query);
+           if(rs.next()){
+               new Selling().setVisible(true);
+               this.dispose();
+               
+               }
+           else{
+               new Selling().setVisible(false);
+           }
+           
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+        }*/
     }//GEN-LAST:event_jLabel4MouseClicked
 
     private void jLabel13MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MouseClicked
         System.exit(0);
     }//GEN-LAST:event_jLabel13MouseClicked
 
-    private void MedIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MedIdActionPerformed
+    private void SearchBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchBarActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_MedIdActionPerformed
+    }//GEN-LAST:event_SearchBarActionPerformed
 
     private void ClearBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ClearBtnMouseClicked
-        MedId.setText("");
+        SearchBar.setText("");
         Qty.setText("");
         MedText.setText("");
         /*MedPrice.setText("");
@@ -589,6 +612,14 @@ int i=0,price,Medid;
     private void ClearBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ClearBtnActionPerformed
 
     }//GEN-LAST:event_ClearBtnActionPerformed
+
+    private void SearchBarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_SearchBarKeyReleased
+        DefaultTableModel table = (DefaultTableModel)MedicineTable.getModel();
+        String search = SearchBar.getText();
+        TableRowSorter<DefaultTableModel> tr = new TableRowSorter<DefaultTableModel>(table);
+        MedicineTable.setRowSorter(tr);
+        tr.setRowFilter(RowFilter.regexFilter(search));
+    }//GEN-LAST:event_SearchBarKeyReleased
 
     /**
      * @param args the command line arguments
@@ -631,11 +662,12 @@ int i=0,price,Medid;
     private javax.swing.JButton ClearBtn;
     private javax.swing.JLabel DateBil;
     private javax.swing.JButton DeleteMed;
-    private javax.swing.JTextField MedId;
     private javax.swing.JTextField MedText;
     private javax.swing.JTable MedicineTable;
     private javax.swing.JButton Print;
     private javax.swing.JTextField Qty;
+    private javax.swing.JLabel Search;
+    private javax.swing.JTextField SearchBar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
@@ -643,7 +675,6 @@ int i=0,price,Medid;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;

@@ -82,7 +82,6 @@ public class Agents extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(1070, 637));
 
         jPanel1.setBackground(new java.awt.Color(51, 51, 255));
 
