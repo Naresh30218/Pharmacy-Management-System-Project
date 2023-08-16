@@ -1,0 +1,1 @@
+Java - jar PharmacyMang-1.0-SNAPSHOT.jar
